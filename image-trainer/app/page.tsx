@@ -14,6 +14,11 @@ function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+const copyLogsToClipboard = (logs: LogEntry[]) => {
+  const text = logs.map(l => `[${l.timestamp}] [${l.type.toUpperCase()}] ${l.message}`).join('\n');
+  navigator.clipboard.writeText(text);
+};
+
 interface LogEntry {
   type: 'info' | 'error' | 'success';
   message: string;
@@ -739,25 +744,44 @@ export default function Home() {
 
            {/* Content Tabs */}
            <div className="bg-zinc-900/30 border border-zinc-800/50 rounded-2xl flex-1 flex flex-col overflow-hidden h-auto max-h-[60vh] backdrop-blur-sm">
-              <div className="flex border-b border-zinc-800/50 px-2 flex-none">
-                 <button 
-                   onClick={() => setActiveTab('logs')}
-                   className={cn("px-6 py-4 text-sm font-medium border-b-2 transition-all flex items-center gap-2", activeTab === 'logs' ? "border-white text-white" : "border-transparent text-zinc-500 hover:text-zinc-300")}
-                 >
-                   <Terminal className="w-4 h-4" /> Logs
-                 </button>
-                 <button 
-                   onClick={() => setActiveTab('charts')}
-                   className={cn("px-6 py-4 text-sm font-medium border-b-2 transition-all flex items-center gap-2", activeTab === 'charts' ? "border-white text-white" : "border-transparent text-zinc-500 hover:text-zinc-300")}
-                 >
-                   <BarChart2 className="w-4 h-4" /> Metrics
-                 </button>
-                 <button 
-                   onClick={() => setActiveTab('results')}
-                   className={cn("px-6 py-4 text-sm font-medium border-b-2 transition-all flex items-center gap-2", activeTab === 'results' ? "border-white text-white" : "border-transparent text-zinc-500 hover:text-zinc-300")}
-                 >
-                   <CheckCircle className="w-4 h-4" /> Results
-                 </button>
+              <div className="flex border-b border-zinc-800/50 px-2 flex-none justify-between items-center">
+                 <div className="flex">
+                   <button 
+                     onClick={() => setActiveTab('logs')}
+                     className={cn("px-6 py-4 text-sm font-medium border-b-2 transition-all flex items-center gap-2", activeTab === 'logs' ? "border-white text-white" : "border-transparent text-zinc-500 hover:text-zinc-300")}
+                   >
+                     <Terminal className="w-4 h-4" /> Logs
+                   </button>
+                   <button 
+                     onClick={() => setActiveTab('charts')}
+                     className={cn("px-6 py-4 text-sm font-medium border-b-2 transition-all flex items-center gap-2", activeTab === 'charts' ? "border-white text-white" : "border-transparent text-zinc-500 hover:text-zinc-300")}
+                   >
+                     <BarChart2 className="w-4 h-4" /> Metrics
+                   </button>
+                   <button 
+                     onClick={() => setActiveTab('results')}
+                     className={cn("px-6 py-4 text-sm font-medium border-b-2 transition-all flex items-center gap-2", activeTab === 'results' ? "border-white text-white" : "border-transparent text-zinc-500 hover:text-zinc-300")}
+                   >
+                     <CheckCircle className="w-4 h-4" /> Results
+                   </button>
+                 </div>
+                 {activeTab === 'logs' && logs.length > 0 && (
+                   <button 
+                     onClick={() => {
+                        copyLogsToClipboard(logs);
+                        const btn = document.getElementById('copy-logs-btn');
+                        if (btn) {
+                          const originalText = btn.innerHTML;
+                          btn.innerHTML = 'Copied!';
+                          setTimeout(() => btn.innerHTML = originalText, 2000);
+                        }
+                     }}
+                     id="copy-logs-btn"
+                     className="px-4 py-1.5 text-xs font-medium border border-zinc-700 hover:bg-zinc-800 text-zinc-300 rounded-md transition-all mr-2"
+                   >
+                     Copy Logs
+                   </button>
+                 )}
               </div>
 
               <div className="flex-1 overflow-y-auto bg-black/50 scrollbar-thin">

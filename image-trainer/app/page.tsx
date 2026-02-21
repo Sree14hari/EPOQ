@@ -321,15 +321,15 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen font-sans bg-black text-zinc-100 p-8">
+    <div className="min-h-screen font-sans bg-white dark:bg-black text-zinc-900 dark:text-zinc-900 dark:text-zinc-100 p-8">
       {/* Header */}
       <header className="mb-12 flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <div className="w-14 h-14 bg-zinc-900 rounded-full border border-zinc-800 overflow-hidden shrink-0">
-             <img src="/epoq2.png" alt="EPOQ Logo" className="w-full h-full object-cover" />
+          <div className="w-14 h-14 bg-zinc-100 dark:bg-zinc-900 rounded-full border border-zinc-200 dark:border-zinc-800 overflow-hidden shrink-0">
+             <img src="/epoq2.png" alt="EPOQ Logo" className="w-full h-full object-cover dark:invert" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold tracking-tight text-white">
+            <h1 className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-900 dark:text-white">
               EPOQ
             </h1>
             <p className="text-sm text-zinc-500 font-mono">v0.1.0-beta</p>
@@ -338,7 +338,7 @@ export default function Home() {
         
         <div className="flex items-center gap-4">
           {/* GPU Status Indicator */}
-          <div className="flex items-center gap-2 px-4 py-2 bg-zinc-900/50 border border-zinc-800 rounded-full">
+          <div className="flex items-center gap-2 px-4 py-2 bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-full">
             <Cpu className={`w-4 h-4 ${gpuAvailable ? 'text-emerald-400' : 'text-zinc-500'}`} />
             <span className="text-xs font-medium">
               {gpuAvailable === null ? 'Checking...' : gpuAvailable ? 'GPU Available' : 'CPU Only'}
@@ -349,17 +349,17 @@ export default function Home() {
           <div className="relative">
             <button 
               onClick={() => setShowPresets(!showPresets)}
-              className="flex items-center gap-2 px-4 py-2 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 rounded-full text-sm text-zinc-300 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-zinc-100 dark:bg-zinc-900 hover:bg-zinc-200 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-zinc-800 rounded-full text-sm text-zinc-700 dark:text-zinc-700 dark:text-zinc-300 transition-colors"
             >
               <Layers className="w-4 h-4" /> Presets
             </button>
             {showPresets && (
-              <div className="absolute right-0 mt-2 w-48 bg-zinc-900 border border-zinc-800 rounded-xl shadow-xl z-50 overflow-hidden">
+              <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-xl z-50 overflow-hidden">
                 {PRESETS.map((preset, i) => (
                   <button
                     key={i}
                     onClick={() => applyPreset(preset)}
-                    className="w-full px-4 py-3 text-left text-sm text-zinc-300 hover:bg-zinc-800 transition-colors flex justify-between items-center"
+                    className="w-full px-4 py-3 text-left text-sm text-zinc-700 dark:text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors flex justify-between items-center"
                   >
                     <span>{preset.name}</span>
                     <span className="text-xs text-zinc-500 font-mono">{preset.epochs}ep/{preset.batchSize}bs</span>
@@ -386,7 +386,7 @@ export default function Home() {
            ) : (
              <button 
                onClick={startTraining}
-               className="flex items-center gap-2 px-6 py-2.5 bg-white text-black hover:bg-zinc-200 rounded-full transition-all text-sm font-medium shadow-lg shadow-white/5"
+               className="flex items-center gap-2 px-6 py-2.5 bg-zinc-900 dark:bg-white text-white dark:text-black hover:bg-zinc-800 dark:hover:bg-zinc-200 rounded-full transition-all text-sm font-medium shadow-lg dark:shadow-white/10"
              >
                <Play className="w-4 h-4 fill-current" /> Start Training
              </button>
@@ -397,9 +397,9 @@ export default function Home() {
       <main className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Left Panel: Configuration */}
         <section className="lg:col-span-4 space-y-8">
-          <div className="bg-zinc-900/30 border border-zinc-800/50 rounded-2xl p-6 backdrop-blur-sm">
+          <div className="bg-zinc-100 dark:bg-zinc-50 dark:bg-zinc-900/30 border border-zinc-800/50 rounded-2xl p-6 backdrop-blur-sm">
             <div className="flex items-center gap-3 mb-6">
-              <Layers className="w-5 h-5 text-zinc-400" />
+              <Layers className="w-5 h-5 text-zinc-500 dark:text-zinc-400" />
               <h2 className="text-lg font-semibold tracking-tight">Configuration</h2>
             </div>
 
@@ -414,12 +414,12 @@ export default function Home() {
                       value={datasetPath}
                       readOnly
                       placeholder="No directory selected"
-                      className="w-full bg-black border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-zinc-300 focus:border-zinc-600 focus:outline-none transition-colors font-mono"
+                      className="w-full bg-white dark:bg-black border border-zinc-200 dark:border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-zinc-700 dark:text-zinc-700 dark:text-zinc-300 focus:border-zinc-400 dark:focus:border-zinc-600 focus:outline-none transition-colors font-mono"
                     />
                   </div>
                   <button 
                      onClick={handlePickDataset}
-                     className="p-2.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 rounded-lg text-zinc-400 hover:text-white transition-colors"
+                     className="p-2.5 bg-white dark:bg-black hover:bg-zinc-100 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-zinc-800 rounded-lg text-zinc-500 dark:text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-900 dark:text-white transition-colors"
                   >
                     <FolderOpen className="w-5 h-5" />
                   </button>
@@ -433,7 +433,7 @@ export default function Home() {
                   <select 
                     value={model}
                     onChange={(e) => setModel(e.target.value)}
-                    className="w-full appearance-none bg-black border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-zinc-300 focus:border-zinc-600 focus:outline-none transition-colors"
+                    className="w-full appearance-none bg-white dark:bg-black border border-zinc-200 dark:border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-zinc-700 dark:text-zinc-700 dark:text-zinc-300 focus:border-zinc-400 dark:focus:border-zinc-600 focus:outline-none transition-colors"
                   >
                     <option value="resnet18">ResNet-18 (Standard)</option>
                     <option value="resnet50">ResNet-50 (Deep)</option>
@@ -455,7 +455,7 @@ export default function Home() {
                     type="number" 
                     value={epochs}
                     onChange={(e) => setEpochs(parseInt(e.target.value) || 1)}
-                    className="w-full bg-black border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-zinc-300 focus:border-zinc-600 focus:outline-none transition-colors font-mono"
+                    className="w-full bg-white dark:bg-black border border-zinc-200 dark:border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-zinc-700 dark:text-zinc-700 dark:text-zinc-300 focus:border-zinc-400 dark:focus:border-zinc-600 focus:outline-none transition-colors font-mono"
                   />
                 </div>
                 <div className="space-y-2">
@@ -464,7 +464,7 @@ export default function Home() {
                     type="number" 
                     value={batchSize}
                     onChange={(e) => setBatchSize(parseInt(e.target.value) || 1)}
-                    className="w-full bg-black border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-zinc-300 focus:border-zinc-600 focus:outline-none transition-colors font-mono"
+                    className="w-full bg-white dark:bg-black border border-zinc-200 dark:border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-zinc-700 dark:text-zinc-700 dark:text-zinc-300 focus:border-zinc-400 dark:focus:border-zinc-600 focus:outline-none transition-colors font-mono"
                   />
                 </div>
               </div>
@@ -478,7 +478,7 @@ export default function Home() {
                   min="0.00001"
                   value={learningRate}
                   onChange={(e) => setLearningRate(parseFloat(e.target.value) || 0.001)}
-                  className="w-full bg-black border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-zinc-300 focus:border-zinc-600 focus:outline-none transition-colors font-mono"
+                  className="w-full bg-white dark:bg-black border border-zinc-200 dark:border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-zinc-700 dark:text-zinc-700 dark:text-zinc-300 focus:border-zinc-400 dark:focus:border-zinc-600 focus:outline-none transition-colors font-mono"
                 />
                 <div className="flex gap-2 mt-2">
                   {[0.01, 0.001, 0.0001, 0.00001].map((lr) => (
@@ -488,7 +488,7 @@ export default function Home() {
                       className={`text-xs px-2 py-1 rounded border transition-colors ${
                         learningRate === lr 
                           ? 'bg-white text-black border-white' 
-                          : 'bg-zinc-900 text-zinc-400 border-zinc-700 hover:border-zinc-500'
+                          : 'bg-zinc-900 text-zinc-500 dark:text-zinc-400 border-zinc-700 hover:border-zinc-500'
                       }`}
                     >
                       {lr}
@@ -506,11 +506,11 @@ export default function Home() {
                     value={savePath}
                     readOnly
                     placeholder="Defaults to dataset dir..."
-                    className="w-full bg-black border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-zinc-300 focus:border-zinc-600 focus:outline-none transition-colors font-mono"
+                    className="w-full bg-white dark:bg-black border border-zinc-200 dark:border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-zinc-700 dark:text-zinc-700 dark:text-zinc-300 focus:border-zinc-400 dark:focus:border-zinc-600 focus:outline-none transition-colors font-mono"
                   />
                   <button 
                      onClick={handlePickSavePath}
-                     className="p-2.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 rounded-lg text-zinc-400 hover:text-white transition-colors"
+                     className="p-2.5 bg-white dark:bg-black hover:bg-zinc-100 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-zinc-800 rounded-lg text-zinc-500 dark:text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-900 dark:text-white transition-colors"
                   >
                     <Save className="w-5 h-5" />
                   </button>
@@ -520,7 +520,7 @@ export default function Home() {
               {/* Toggles */}
               <div className="pt-6 border-t border-zinc-800/50 space-y-4">
                 <label className="flex items-center justify-between cursor-pointer group">
-                  <span className="text-sm text-zinc-400 group-hover:text-zinc-200 transition-colors">Generate Dataset Archive</span>
+                  <span className="text-sm text-zinc-500 dark:text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-700 dark:group-hover:text-zinc-700 dark:text-zinc-200 transition-colors">Generate Dataset Archive</span>
                   <div className={cn("w-10 h-6 rounded-full border flex items-center px-1 transition-all", zipDataset ? "bg-white border-white justify-end" : "bg-zinc-900 border-zinc-700 justify-start")}>
                     <input type="checkbox" className="hidden" checked={zipDataset} onChange={e => setZipDataset(e.target.checked)} />
                     <div className={cn("w-3.5 h-3.5 rounded-full transition-colors", zipDataset ? "bg-black" : "bg-zinc-500")} />
@@ -528,7 +528,7 @@ export default function Home() {
                 </label>
 
                 <label className="flex items-center justify-between cursor-pointer group">
-                  <span className="text-sm text-zinc-400 group-hover:text-zinc-200 transition-colors">Archive Only Mode</span>
+                  <span className="text-sm text-zinc-500 dark:text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-700 dark:group-hover:text-zinc-700 dark:text-zinc-200 transition-colors">Archive Only Mode</span>
                   <div className={cn("w-10 h-6 rounded-full border flex items-center px-1 transition-all", onlyZip ? "bg-white border-white justify-end" : "bg-zinc-900 border-zinc-700 justify-start")}>
                     <input type="checkbox" className="hidden" checked={onlyZip} onChange={e => setOnlyZip(e.target.checked)} />
                     <div className={cn("w-3.5 h-3.5 rounded-full transition-colors", onlyZip ? "bg-black" : "bg-zinc-500")} />
@@ -539,16 +539,16 @@ export default function Home() {
 
             {/* Recent Experiments */}
             {recentExperiments.length > 0 && (
-              <div className="bg-zinc-900/30 border border-zinc-800/50 rounded-2xl p-6 backdrop-blur-sm">
+              <div className="bg-zinc-100 dark:bg-zinc-50 dark:bg-zinc-900/30 border border-zinc-800/50 rounded-2xl p-6 backdrop-blur-sm">
                 <div className="flex items-center gap-3 mb-4">
-                  <Activity className="w-5 h-5 text-zinc-400" />
+                  <Activity className="w-5 h-5 text-zinc-500 dark:text-zinc-400" />
                   <h2 className="text-lg font-semibold tracking-tight">Recent Experiments</h2>
                 </div>
                 <div className="space-y-2">
                   {recentExperiments.map((exp) => (
-                    <div key={exp.id} className="flex justify-between items-center p-3 bg-black/30 rounded-lg border border-zinc-800/50">
+                    <div key={exp.id} className="flex justify-between items-center p-3 bg-white dark:bg-black/30 rounded-lg border border-zinc-800/50">
                       <div>
-                        <div className="text-sm text-zinc-300 font-medium">{exp.model}</div>
+                        <div className="text-sm text-zinc-700 dark:text-zinc-300 font-medium">{exp.model}</div>
                         <div className="text-xs text-zinc-500">{exp.date}</div>
                       </div>
                       <div className="text-right">
@@ -567,11 +567,11 @@ export default function Home() {
             
            {/* Progress Widget */}
            {(isRunning || progress > 0) && (
-             <div className="bg-zinc-900/30 border border-zinc-800/50 rounded-2xl p-6 backdrop-blur-sm">
+             <div className="bg-zinc-100 dark:bg-zinc-50 dark:bg-zinc-900/30 border border-zinc-800/50 rounded-2xl p-6 backdrop-blur-sm">
                 <div className="flex justify-between items-end mb-4">
                     <div>
-                        <h3 className="text-sm font-medium text-zinc-400 uppercase tracking-widest">Training Progress</h3>
-                        <p className="text-2xl font-light text-white mt-1">
+                        <h3 className="text-sm font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-widest">Training Progress</h3>
+                        <p className="text-2xl font-light text-zinc-900 dark:text-white mt-1">
                            {isRunning ? `Epoch ${currentStatus?.epoch || 0} / ${currentStatus?.total_epochs || epochs}` : "Complete"}
                         </p>
                         {currentStatus?.learning_rate && (
@@ -579,7 +579,7 @@ export default function Home() {
                         )}
                     </div>
                     <div className="text-right">
-                       <div className="text-3xl font-bold font-mono text-white tracking-tighter">{currentStatus?.accuracy ? `${(parseFloat(currentStatus.accuracy)*100).toFixed(2)}%` : "0.00%"}</div>
+                       <div className="text-3xl font-bold font-mono text-zinc-900 dark:text-white tracking-tighter">{currentStatus?.accuracy ? `${(parseFloat(currentStatus.accuracy)*100).toFixed(2)}%` : "0.00%"}</div>
                        <div className="text-xs text-zinc-500 uppercase tracking-wider mt-1">Accuracy</div>
                     </div>
                 </div>
@@ -590,39 +590,39 @@ export default function Home() {
            )}
 
            {/* Content Tabs */}
-           <div className="bg-zinc-900/30 border border-zinc-800/50 rounded-2xl flex-1 flex flex-col overflow-hidden h-auto max-h-[60vh] backdrop-blur-sm">
+           <div className="bg-zinc-100 dark:bg-zinc-50 dark:bg-zinc-900/30 border border-zinc-800/50 rounded-2xl flex-1 flex flex-col overflow-hidden h-auto max-h-[60vh] backdrop-blur-sm">
               <div className="flex border-b border-zinc-800/50 px-2 flex-none">
                  <button 
                    onClick={() => setActiveTab('logs')}
-                   className={cn("px-6 py-4 text-sm font-medium border-b-2 transition-all flex items-center gap-2", activeTab === 'logs' ? "border-white text-white" : "border-transparent text-zinc-500 hover:text-zinc-300")}
+                   className={cn("px-6 py-4 text-sm font-medium border-b-2 transition-all flex items-center gap-2", activeTab === 'logs' ? "border-white text-zinc-900 dark:text-white" : "border-transparent text-zinc-500 hover:text-zinc-700 dark:text-zinc-300")}
                  >
                    <Terminal className="w-4 h-4" /> Logs
                  </button>
                  <button 
                    onClick={() => setActiveTab('charts')}
-                   className={cn("px-6 py-4 text-sm font-medium border-b-2 transition-all flex items-center gap-2", activeTab === 'charts' ? "border-white text-white" : "border-transparent text-zinc-500 hover:text-zinc-300")}
+                   className={cn("px-6 py-4 text-sm font-medium border-b-2 transition-all flex items-center gap-2", activeTab === 'charts' ? "border-white text-zinc-900 dark:text-white" : "border-transparent text-zinc-500 hover:text-zinc-700 dark:text-zinc-300")}
                  >
                    <BarChart2 className="w-4 h-4" /> Metrics
                  </button>
                  <button 
                    onClick={() => setActiveTab('results')}
-                   className={cn("px-6 py-4 text-sm font-medium border-b-2 transition-all flex items-center gap-2", activeTab === 'results' ? "border-white text-white" : "border-transparent text-zinc-500 hover:text-zinc-300")}
+                   className={cn("px-6 py-4 text-sm font-medium border-b-2 transition-all flex items-center gap-2", activeTab === 'results' ? "border-white text-zinc-900 dark:text-white" : "border-transparent text-zinc-500 hover:text-zinc-700 dark:text-zinc-300")}
                  >
                    <CheckCircle className="w-4 h-4" /> Results
                  </button>
               </div>
 
-              <div className="flex-1 overflow-y-auto bg-black/50 scrollbar-thin">
+              <div className="flex-1 overflow-y-auto bg-white dark:bg-black/50 scrollbar-thin">
                  {activeTab === 'logs' && (
                    <div className="p-6 font-mono text-xs space-y-1.5 h-full">
                       {logs.length === 0 && <div className="text-zinc-600 italic text-center mt-20">Waiting for process logs...</div>}
                       {logs.map((log, i) => (
-                        <div key={i} className="flex gap-3 text-zinc-300 border-l-2 border-transparent hover:bg-zinc-900/50 pl-2 -ml-2 py-0.5 rounded transition-colors group">
+                        <div key={i} className="flex gap-3 text-zinc-700 dark:text-zinc-300 border-l-2 border-transparent hover:bg-zinc-100 dark:bg-zinc-900/50 pl-2 -ml-2 py-0.5 rounded transition-colors group">
                            <span className="text-zinc-600 select-none w-20 shrink-0 group-hover:text-zinc-500 transition-colors">{log.timestamp}</span>
                            <span className={cn(
                              "break-all",
                              log.type === 'error' ? 'text-red-400' : 
-                             log.type === 'success' ? 'text-emerald-400' : 'text-zinc-300'
+                             log.type === 'success' ? 'text-emerald-400' : 'text-zinc-700 dark:text-zinc-300'
                            )}>
                              {log.type === 'error' && <span className="mr-2 text-red-500 font-bold">ERR</span>}
                              {log.message}
@@ -639,7 +639,7 @@ export default function Home() {
                          <>
                            <div className="h-[250px] w-full">
                               <div className="flex justify-between mb-4">
-                                <h4 className="text-sm font-medium text-zinc-400 uppercase tracking-widest">Model Accuracy</h4>
+                                <h4 className="text-sm font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-widest">Model Accuracy</h4>
                                 <span className="text-xs text-zinc-600 font-mono">HIGHEST: {Math.max(...chartData.map(d => d.accuracy)).toFixed(4)}</span>
                               </div>
                               <ResponsiveContainer width="100%" height="100%">
@@ -657,7 +657,7 @@ export default function Home() {
                            </div>
                            <div className="h-[250px] w-full">
                               <div className="flex justify-between mb-4">
-                                <h4 className="text-sm font-medium text-zinc-400 uppercase tracking-widest">Loss Function</h4>
+                                <h4 className="text-sm font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-widest">Loss Function</h4>
                                 <span className="text-xs text-zinc-600 font-mono">LOWEST: {Math.min(...chartData.map(d => d.loss)).toFixed(4)}</span>
                               </div>
                               <ResponsiveContainer width="100%" height="100%">
@@ -689,18 +689,18 @@ export default function Home() {
                          <div className="space-y-10">
                             {/* Summary Stats */}
                             <div>
-                              <h3 className="text-sm font-medium text-zinc-400 uppercase tracking-widest mb-6">Performance Summary</h3>
+                              <h3 className="text-sm font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-widest mb-6">Performance Summary</h3>
                               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                                  {/* Stat Cards */}
                                  {[
                                    { label: "Total Epochs", value: evalResult.total_epochs },
                                    { label: "Test Set Size", value: evalResult.test_size },
-                                   { label: "Precision (Avg)", value: evalResult.report['weighted avg']?.precision.toFixed(4) ?? 'N/A', color: 'text-zinc-100' },
-                                   { label: "Recall (Avg)", value: evalResult.report['weighted avg']?.recall.toFixed(4) ?? 'N/A', color: 'text-zinc-100' },
+                                   { label: "Precision (Avg)", value: evalResult.report['weighted avg']?.precision.toFixed(4) ?? 'N/A', color: 'text-zinc-900 dark:text-zinc-100' },
+                                   { label: "Recall (Avg)", value: evalResult.report['weighted avg']?.recall.toFixed(4) ?? 'N/A', color: 'text-zinc-900 dark:text-zinc-100' },
                                  ].map((stat, i) => (
-                                   <div key={i} className="p-5 bg-zinc-900/50 rounded-xl border border-zinc-800/50">
+                                   <div key={i} className="p-5 bg-zinc-100 dark:bg-zinc-900/50 rounded-xl border border-zinc-800/50">
                                       <div className="text-xs text-zinc-500 uppercase tracking-wider mb-2">{stat.label}</div>
-                                      <div className={cn("text-2xl font-bold font-mono", stat.color || "text-white")}>{stat.value}</div>
+                                      <div className={cn("text-2xl font-bold font-mono", stat.color || "text-zinc-900 dark:text-white")}>{stat.value}</div>
                                    </div>
                                  ))}
                               </div>
@@ -709,7 +709,7 @@ export default function Home() {
                             <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
                               {/* Left: CM */}
                               <div>
-                                 <h3 className="text-sm font-medium text-zinc-400 uppercase tracking-widest mb-6">Confusion Matrix</h3>
+                                 <h3 className="text-sm font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-widest mb-6">Confusion Matrix</h3>
                                  {evalResult && evalResult.confusion_matrix_path && (
                                     <div className="rounded-xl border border-zinc-800 bg-black p-4">
                                        {matrixImageUrl && !imageLoadError ? (
@@ -760,16 +760,16 @@ export default function Home() {
 
                               {/* Right: Detailed Report */}
                               <div>
-                                <h3 className="text-sm font-medium text-zinc-400 uppercase tracking-widest mb-6">Classification Report</h3>
-                                <div className="overflow-auto max-h-[500px] rounded-xl border border-zinc-800 bg-zinc-900/20 scrollbar-thin">
+                                <h3 className="text-sm font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-widest mb-6">Classification Report</h3>
+                                <div className="overflow-auto max-h-[500px] rounded-xl border border-zinc-800 bg-zinc-100 dark:bg-zinc-900/20 scrollbar-thin">
                                    <table className="w-full min-w-[600px] text-sm text-left relative border-collapse">
-                                      <thead className="sticky top-0 z-10 bg-black/90 backdrop-blur-md shadow-sm">
+                                      <thead className="sticky top-0 z-10 bg-white dark:bg-black/90 backdrop-blur-md shadow-sm">
                                          <tr>
-                                            <th className="px-5 py-4 whitespace-nowrap text-xs font-semibold text-zinc-400 uppercase tracking-wider border-b border-zinc-800">Class</th>
-                                            <th className="px-5 py-4 whitespace-nowrap text-xs font-semibold text-zinc-400 uppercase tracking-wider border-b border-zinc-800 text-right">Precision</th>
-                                            <th className="px-5 py-4 whitespace-nowrap text-xs font-semibold text-zinc-400 uppercase tracking-wider border-b border-zinc-800 text-right">Recall</th>
-                                            <th className="px-5 py-4 whitespace-nowrap text-xs font-semibold text-zinc-400 uppercase tracking-wider border-b border-zinc-800 text-right">F1-Score</th>
-                                            <th className="px-5 py-4 whitespace-nowrap text-xs font-semibold text-zinc-400 uppercase tracking-wider border-b border-zinc-800 text-right">Support</th>
+                                            <th className="px-5 py-4 whitespace-nowrap text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider border-b border-zinc-800">Class</th>
+                                            <th className="px-5 py-4 whitespace-nowrap text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider border-b border-zinc-800 text-right">Precision</th>
+                                            <th className="px-5 py-4 whitespace-nowrap text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider border-b border-zinc-800 text-right">Recall</th>
+                                            <th className="px-5 py-4 whitespace-nowrap text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider border-b border-zinc-800 text-right">F1-Score</th>
+                                            <th className="px-5 py-4 whitespace-nowrap text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider border-b border-zinc-800 text-right">Support</th>
                                          </tr>
                                       </thead>
                                       <tbody className="divide-y divide-zinc-800/50">
@@ -777,10 +777,10 @@ export default function Home() {
                                              if (typeof val !== 'object') return null;
                                              return (
                                                <tr key={key} className="group hover:bg-white/5 transition-colors">
-                                                  <td className="px-5 py-3 font-mono text-zinc-300 font-medium whitespace-nowrap group-hover:text-white border-r border-dashed border-zinc-800/30">{key}</td>
-                                                  <td className="px-5 py-3 whitespace-nowrap text-right font-mono text-zinc-400">{val.precision?.toFixed(4)}</td>
-                                                  <td className="px-5 py-3 whitespace-nowrap text-right font-mono text-zinc-400">{val.recall?.toFixed(4)}</td>
-                                                  <td className="px-5 py-3 whitespace-nowrap text-right font-mono text-zinc-300 font-semibold">{val.f1_score?.toFixed(4) ?? val['f1-score']?.toFixed(4)}</td>
+                                                  <td className="px-5 py-3 font-mono text-zinc-700 dark:text-zinc-300 font-medium whitespace-nowrap group-hover:text-zinc-900 dark:text-white border-r border-dashed border-zinc-800/30">{key}</td>
+                                                  <td className="px-5 py-3 whitespace-nowrap text-right font-mono text-zinc-500 dark:text-zinc-400">{val.precision?.toFixed(4)}</td>
+                                                  <td className="px-5 py-3 whitespace-nowrap text-right font-mono text-zinc-500 dark:text-zinc-400">{val.recall?.toFixed(4)}</td>
+                                                  <td className="px-5 py-3 whitespace-nowrap text-right font-mono text-zinc-700 dark:text-zinc-300 font-semibold">{val.f1_score?.toFixed(4) ?? val['f1-score']?.toFixed(4)}</td>
                                                   <td className="px-5 py-3 whitespace-nowrap text-right font-mono text-zinc-500">{val.support}</td>
                                                </tr>
                                              );

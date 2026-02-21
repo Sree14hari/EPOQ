@@ -7,6 +7,12 @@
   --foreground: #09090b;
 }
 
+/* Manual dark mode via class - takes precedence over media query */
+.dark {
+  --background: #09090b;
+  --foreground: #fafafa;
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #09090b;

@@ -17,6 +17,7 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import seaborn as sns
+from matplotlib.backends.backend_pdf import PdfPages
 
 def main():
     parser = argparse.ArgumentParser(description='PyTorch Trainer')
@@ -36,6 +37,8 @@ def main():
     
     data_dir = args.path
     save_dir = args.save_path if args.save_path else data_dir
+    # Ensure save dir exists
+    os.makedirs(save_dir, exist_ok=True)
     
     if not os.path.exists(data_dir):
         print(json.dumps({"status": "error", "message": "Directory not found"}), flush=True)
@@ -61,6 +64,11 @@ def main():
         ]),
     }
 
+                # Tracking lists for plots
+                train_losses = []
+                val_losses = []
+                train_accs = []
+                val_accs = []
     dataloaders = {}
     dataset_sizes = {}
     class_names = []
@@ -81,18 +89,34 @@ def main():
     else:
         try:
             cpu_count = os.cpu_count() or 1
-            if sys.platform == 'win32':
-                num_workers = min(4, cpu_count)
+                            # Convert to float for comparisons and JSON
+                            epoch_acc_val = float(epoch_acc)
+                            if epoch_acc_val > best_acc:
+                                best_acc = epoch_acc_val
+                                best_model_path = os.path.join(save_dir, 'best_model.pth')
+                                torch.save(model.state_dict(), best_model_path)
+                                # Notify UI of checkpoint
+                                print(json.dumps({
+                                    "status": "checkpoint", 
+                                    "message": f"New Best Model! Acc: {epoch_acc_val:.4f}",
+                                    "path": best_model_path
+                                }), flush=True)
             else:
-                num_workers = 4 if cpu_count > 4 else cpu_count
-        except Exception:
-            num_workers = 0
-
-    if os.path.isdir(train_dir):
-        print("Detected structured dataset (train/val/test).", flush=True)
-        
-        # Train
+                            # record metrics
+                            val_losses.append(float(epoch_loss))
+                            val_accs.append(epoch_acc_val)
+                        else:
+                            train_losses.append(float(epoch_loss))
+                            train_accs.append(float(epoch_acc))
         train_dataset = datasets.ImageFolder(train_dir, data_transforms['train'])
+                            status_update = {
+                                "epoch": epoch + 1,
+                                "total_epochs": num_epochs,
+                                "accuracy": f"{epoch_acc_val:.4f}",
+                                "loss": f"{epoch_loss:.4f}",
+                                "status": "training"
+                            }
+                            print(json.dumps(status_update), flush=True)
         dataloaders['train'] = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=num_workers)
         dataset_sizes['train'] = len(train_dataset)
         class_names = train_dataset.classes
@@ -413,6 +437,51 @@ def main():
             cm_save_path = os.path.join(save_dir, 'confusion_matrix.png')
             plt.savefig(cm_save_path)
             plt.close()
+                        # Also save as JPEG
+                        try:
+                            plt.figure(figsize=(10, 8))
+                            sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=class_names, yticklabels=class_names)
+                            plt.axis('off')
+                            cm_jpeg_path = os.path.join(save_dir, 'confusion_matrix.jpg')
+                            plt.savefig(cm_jpeg_path, format='jpeg', dpi=150, bbox_inches='tight')
+                            plt.close()
+                        except Exception:
+                            cm_jpeg_path = None
+
+                        # Training curves (if we recorded any)
+                        training_curves_path = os.path.join(save_dir, 'training_curves.png')
+                        training_curves_jpeg = os.path.join(save_dir, 'training_curves.jpg')
+                        try:
+                            if len(train_accs) > 0 or len(val_accs) > 0:
+                                fig, axs = plt.subplots(1, 2, figsize=(14, 5))
+                                if len(train_accs) > 0:
+                                    axs[0].plot(range(1, len(train_accs)+1), train_accs, label='train_acc')
+                                if len(val_accs) > 0:
+                                    axs[0].plot(range(1, len(val_accs)+1), val_accs, label='val_acc')
+                                axs[0].set_title('Accuracy')
+                                axs[0].set_xlabel('Epoch')
+                                axs[0].set_ylabel('Accuracy')
+                                axs[0].legend()
+
+                                if len(train_losses) > 0:
+                                    axs[1].plot(range(1, len(train_losses)+1), train_losses, label='train_loss')
+                                if len(val_losses) > 0:
+                                    axs[1].plot(range(1, len(val_losses)+1), val_losses, label='val_loss')
+                                axs[1].set_title('Loss')
+                                axs[1].set_xlabel('Epoch')
+                                axs[1].set_ylabel('Loss')
+                                axs[1].legend()
+
+                                plt.tight_layout()
+                                fig.savefig(training_curves_path)
+                                fig.savefig(training_curves_jpeg, format='jpeg', dpi=150, bbox_inches='tight')
+                                plt.close(fig)
+                            else:
+                                training_curves_path = None
+                                training_curves_jpeg = None
+                        except Exception:
+                            training_curves_path = None
+                            training_curves_jpeg = None
             print(f"Confusion Matrix saved to: {cm_save_path}", flush=True)
             
             # Send Data to Frontend
@@ -420,10 +489,47 @@ def main():
                 "status": "evaluation_complete",
                 "report": cr_dict,
                 "confusion_matrix_path": cm_save_path,
+                "confusion_matrix_jpeg": cm_jpeg_path if 'cm_jpeg_path' in locals() else None,
+                "training_curves": training_curves_path,
+                "training_curves_jpeg": training_curves_jpeg if 'training_curves_jpeg' in locals() else None,
                 "total_epochs": num_epochs,
                 "test_size": dataset_sizes['test']
             }
             print(json.dumps(eval_result), flush=True)
+
+            # Create a combined PDF report
+            try:
+                pdf_path = os.path.join(save_dir, 'results_report.pdf')
+                with PdfPages(pdf_path) as pdf:
+                    # Page 1: Classification report (text)
+                    fig, ax = plt.subplots(figsize=(8.27, 11.69))
+                    ax.axis('off')
+                    header = f"Classification Report - {os.path.basename(data_dir)}\n"
+                    ax.text(0, 1, header + '\n' + cr_text, va='top', fontsize=8, family='monospace')
+                    pdf.savefig(fig)
+                    plt.close(fig)
+
+                    # Page 2: Confusion matrix image
+                    if os.path.exists(cm_save_path):
+                        img = plt.imread(cm_save_path)
+                        fig, ax = plt.subplots(figsize=(8, 6))
+                        ax.imshow(img)
+                        ax.axis('off')
+                        pdf.savefig(fig)
+                        plt.close(fig)
+
+                    # Page 3: Training curves
+                    if training_curves_path and os.path.exists(training_curves_path):
+                        img = plt.imread(training_curves_path)
+                        fig, ax = plt.subplots(figsize=(8, 6))
+                        ax.imshow(img)
+                        ax.axis('off')
+                        pdf.savefig(fig)
+                        plt.close(fig)
+
+                print(json.dumps({"status": "report_created", "pdf_path": pdf_path}), flush=True)
+            except Exception as e:
+                print(f"Warning: Failed to create PDF report: {e}", flush=True)
 
     except Exception as e:
         # Catch and print any error clearly

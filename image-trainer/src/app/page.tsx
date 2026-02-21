@@ -1,11 +1,17 @@
 "use client";
 
 import Image from "next/image";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { open as openDialog } from "@tauri-apps/plugin-dialog";
 import GPUStatus from "./components/GPUStatus";
 import DependencyWizard from "./components/DependencyWizard";
+
+// The UI supports desktop-specific features via Tauri (opening files with the
+// host OS, reading binary files for previews). To keep this module safe for
+// Next.js server-side rendering we avoid top-level imports of Tauri APIs and
+// instead dynamically import them at runtime where needed. See `openPath`
+// and `loadPreviewFromPath` below for the dynamic-load pattern.
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -342,6 +348,10 @@ export default function Home() {
   const [gpuOutput, setGpuOutput] = useState<string | null>(null);
   const [gpuLoading, setGpuLoading] = useState(false);
   const [depsChecked, setDepsChecked] = useState(false);
+  const [saveDir, setSaveDir] = useState<string>("");
+  const [outputs, setOutputs] = useState<Record<string, string | null> | null>(null);
+  const [outputsLoading, setOutputsLoading] = useState(false);
+  const [previews, setPreviews] = useState<Record<string, string | null>>({});
 
   const checkGpu = useCallback(async () => {
     setGpuLoading(true);
@@ -354,6 +364,88 @@ export default function Home() {
       setGpuLoading(false);
     }
   }, []);
+
+  const fetchOutputs = useCallback(async () => {
+    if (!saveDir) return;
+    setOutputsLoading(true);
+    setOutputs(null);
+    try {
+      const raw: string = await invoke("get_output_files", { save_dir: saveDir });
+      const parsed = JSON.parse(raw) as Record<string, string | null>;
+      setOutputs(parsed);
+    } catch (err: unknown) {
+      setOutputs({ error: String(err) });
+    } finally {
+      setOutputsLoading(false);
+    }
+  }, [saveDir]);
+
+  const openPath = useCallback(async (p: string | null) => {
+    if (!p) return;
+    try {
+      // Dynamic-load the Tauri shell API at call-time so the module does not
+      // fail when imported on the server. This keeps the function testable in
+      // browser-only and SSR environments while enabling the desktop behavior
+      // when the app runs as a Tauri client. The shell.open call will use the
+      // OS default handler to open the file (PDF, image, model file, etc.).
+      const shell = await import("@tauri-apps/api/shell");
+      await shell.open(p);
+    } catch (e) {
+      console.error("Failed to open path", e);
+    }
+  }, []);
+
+  // Load image previews (confusion matrix / training curves) using Tauri fs.
+  // Programmer notes:
+  // - We dynamic-import the `@tauri-apps/api/fs` module at runtime to prevent
+  //   server-side builds from attempting to resolve Tauri-native APIs.
+  // - The function reads the binary file, creates an object URL and stores it
+  //   in `previews` for use as an <img> src. Consumers should revoke object
+  //   URLs when no longer needed (the effect cleanup below handles that).
+  const loadPreviewFromPath = useCallback(async (key: string, p: string | null) => {
+    if (!p) {
+      setPreviews((s) => ({ ...s, [key]: null }));
+      return;
+    }
+    try {
+      const fp = p.startsWith("file://") ? p.replace("file://", "") : p;
+      // dynamic import to avoid SSR/build-time errors
+      const fs = await import("@tauri-apps/api/fs");
+      const data = await fs.readBinaryFile(fp);
+      const arr = new Uint8Array(data as Uint8Array);
+      const lower = fp.toLowerCase();
+      let mime = "application/octet-stream";
+      if (lower.endsWith(".png")) mime = "image/png";
+      else if (lower.endsWith(".jpg") || lower.endsWith(".jpeg")) mime = "image/jpeg";
+
+      const blob = new Blob([arr.buffer], { type: mime });
+      const url = URL.createObjectURL(blob);
+      setPreviews((s) => ({ ...s, [key]: url }));
+    } catch (e) {
+      console.warn("Preview load failed", e);
+      setPreviews((s) => ({ ...s, [key]: null }));
+    }
+  }, []);
+
+  // When outputs change, load previews for known image keys
+  useEffect(() => {
+    if (!outputs) return;
+    const keys = ["confusion_matrix_png", "confusion_matrix_jpg", "training_curves_png", "training_curves_jpg"];
+    keys.forEach((k) => {
+      // @ts-ignore
+      const p = outputs[k];
+      // @ts-ignore
+      loadPreviewFromPath(k, p ?? null);
+    });
+
+    return () => {
+      Object.values(previews).forEach((u) => {
+        if (u) URL.revokeObjectURL(u);
+      });
+      setPreviews({});
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [outputs]);
 
   return (
     <>
@@ -422,6 +514,53 @@ export default function Home() {
             </div>
 
             <GPUStatus/>
+
+            {/* Report / Model download section */}
+            <div className="w-full rounded-xl border border-zinc-800 bg-zinc-900 p-4">
+              <label className="block text-xs text-zinc-400 mb-2">Save directory (where training outputs are written)</label>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={saveDir}
+                  onChange={(e) => setSaveDir(e.target.value)}
+                  placeholder="/path/to/save_dir"
+                  className="flex-1 rounded-xl bg-zinc-800 border border-zinc-700 px-4 py-2.5 text-sm text-zinc-200"
+                />
+                <button
+                  onClick={fetchOutputs}
+                  className="rounded-xl bg-blue-600 hover:bg-blue-500 px-4 py-2.5 text-sm font-medium text-white"
+                  disabled={!saveDir || outputsLoading}
+                >
+                  {outputsLoading ? 'Loading…' : 'List Outputs'}
+                </button>
+              </div>
+
+              {outputs && (
+                <div className="mt-3 grid grid-cols-1 gap-3">
+                  {Object.entries(outputs).map(([k, v]) => (
+                    <div key={k} className="flex items-center justify-between gap-3">
+                      <div className="flex items-center gap-3">
+                        {/* thumbnail if available */}
+                        {previews[k] ? (
+                          <img src={previews[k] ?? undefined} alt={k} className="w-28 h-auto rounded-md border border-zinc-800" />
+                        ) : (
+                          <div className="w-28 h-20 rounded-md bg-zinc-800 flex items-center justify-center text-xs text-zinc-500">No preview</div>
+                        )}
+                        <div className="text-sm text-zinc-300 truncate">{k}</div>
+                      </div>
+                      {v ? (
+                        <div className="flex items-center gap-2">
+                          <button onClick={() => openPath(v)} className="rounded-md bg-zinc-700 px-3 py-1 text-xs text-white">Open</button>
+                          <a href={`file://${v}`} className="rounded-md border border-zinc-700 px-3 py-1 text-xs text-zinc-300" target="_blank" rel="noreferrer">Open (fallback)</a>
+                        </div>
+                      ) : (
+                        <div className="text-xs text-zinc-500 italic">not found</div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
 
             <div className="flex gap-3">
               <a

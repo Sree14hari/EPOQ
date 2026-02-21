@@ -204,7 +204,7 @@ Step 10 — Rust Basics (optional, 2–4 weeks)
    cd EPOQ
    ```
 
-2. **Install Node dependencies**
+2. **Install Node dependencies (local / non-Docker)**
 
    ```bash
    cd image-trainer
@@ -216,6 +216,38 @@ Step 10 — Rust Basics (optional, 2–4 weeks)
    npm run tauri dev
    ```
    _This command will compile the Rust backend, start the Next.js frontend, and launch the desktop window._
+
+---
+
+## 🐳 Quickstart (Docker)
+
+If you prefer an isolated setup, you can use Docker + Docker Compose to run the `image-trainer` Next.js UI service for development. Note: Tauri (native desktop) requires Rust and cannot run the desktop window inside Docker — this will containerize the web UI only for easier cross-machine dev.
+
+Prerequisites:
+
+```bash
+docker --version
+docker compose version
+```
+
+Start the `image-trainer` dev container (builds image if needed):
+
+```bash
+docker compose up --build image-trainer
+```
+
+Service exposed by default:
+
+- Image Trainer (Next.js UI): http://localhost:3000/
+
+To stop and remove the `image-trainer` container:
+
+```bash
+docker compose down
+```
+
+The compose setup mounts the `image-trainer` directory into the container, so edits are reflected immediately.
+
 
 ---
 

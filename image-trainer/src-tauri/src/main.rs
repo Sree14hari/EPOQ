@@ -143,6 +143,45 @@ async fn check_dependencies(app: tauri::AppHandle) -> Result<String, String> {
     }
 }
 
+/// Return the main output file paths for a given save directory.
+/// - This helper is intentionally lightweight: it does not attempt to read or
+///   stream files, it only checks presence and returns absolute paths as JSON.
+/// - The returned JSON keys map to common artifacts produced by the Python
+///   training script (`script.py`) such as `best_model.pth`, confusion matrix
+///   images, training curves, and a combined PDF report.
+/// - Rationale: frontends (or the Tauri layer) can call this to decide which
+///   artifacts are available and then either open them with the system shell
+///   or stream/read them via platform APIs if needed.
+/// Returns: JSON string mapping artifact keys to absolute path or null.
+#[tauri::command]
+async fn get_output_files(_app: tauri::AppHandle, save_dir: String) -> Result<String, String> {
+    use std::path::PathBuf;
+    use serde_json::json;
+
+    let dir = PathBuf::from(save_dir);
+    let files = [
+        ("best_model", "best_model.pth"),
+        ("confusion_matrix_png", "confusion_matrix.png"),
+        ("confusion_matrix_jpg", "confusion_matrix.jpg"),
+        ("training_curves_png", "training_curves.png"),
+        ("training_curves_jpg", "training_curves.jpg"),
+        ("report_pdf", "results_report.pdf"),
+    ];
+
+    let mut map = serde_json::Map::new();
+
+    for (key, fname) in files.iter() {
+        let p = dir.join(fname);
+        if p.exists() {
+            map.insert(key.to_string(), json!(p.to_string_lossy().to_string()));
+        } else {
+            map.insert(key.to_string(), serde_json::Value::Null);
+        }
+    }
+
+    serde_json::to_string(&map).map_err(|e| e.to_string())
+}
+
 fn main() {
     tauri::Builder::default()
         .plugin(tauri_plugin_shell::init())
@@ -152,8 +191,8 @@ fn main() {
             run_tabular_processor,
             run_check_gpu,
             get_system_info,
-            check_dependencies
-
+            check_dependencies,
+            get_output_files
         ])
         .setup(|app| {
             let window = app.get_webview_window("main").unwrap();

@@ -114,8 +114,7 @@ export default function Home() {
   const [depsChecked, setDepsChecked] = useState(false);
   const logsEndRef = useRef<HTMLDivElement>(null);
   const commandRef = useRef<Command<string> | null>(null);
-  const childRef = useRef<unknown>(null);
-
+  const childRef = useRef<any>(null);
   // Check GPU availability
   useEffect(() => {
     async function checkGpu() {
@@ -250,22 +249,20 @@ export default function Home() {
       logsEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
   }, [logs, activeTab]);
-  useEffect(() => {
-  if (activeTab === 'system' && !systemInfo) {
-    fetchSystemInfo();
-  }
-}, [activeTab]);
+ 
 useEffect(() => {
-  if (activeTab === "system") {
-    fetchSystemInfo();
+  if (activeTab !== "system") return;
 
-    const interval = setInterval(() => {
-      fetchSystemInfo();
-    }, 3000);
+  // First load → show spinner
+  fetchSystemInfo(true);
 
-    return () => clearInterval(interval);
-  }
-}, [activeTab, isRunning]);
+  const interval = setInterval(() => {
+    fetchSystemInfo(false); // silent refresh
+  }, 3000);
+
+  return () => clearInterval(interval);
+
+}, [activeTab]);
 
   useEffect(() => {
     async function loadMatrixImage() {
@@ -578,18 +575,19 @@ const exportAsJson = async () => {
     addLog(`Export failed: ${err}`, "error");
   }
 };
-const fetchSystemInfo = async () => {
-  setSystemLoading(true);
-  setSystemError(null);
-
+const fetchSystemInfo = async (initial = false) => {
   try {
-    const raw: string = await invoke("get_system_info");
-    const parsed = JSON.parse(raw);
+    if (initial) setSystemLoading(true);
+
+    const raw = await invoke("get_system_info");
+    const parsed = JSON.parse(raw as string);
+
     setSystemInfo(parsed);
+    setSystemError(null);
   } catch (err) {
-    setSystemError(String(err));
+    setSystemError("Failed to load system information");
   } finally {
-    setSystemLoading(false);
+    if (initial) setSystemLoading(false);
   }
 };
 
@@ -1355,6 +1353,98 @@ const fetchSystemInfo = async () => {
     )}
 
     {systemInfo && (
+      <div className="space-y-8">
+         {/* ================= LIVE PERFORMANCE STRIP ================= */}
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+     <div
+  className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6 shadow-sm">
+  <div className="flex justify-between items-center mb-4">
+    <span
+      className={cn(
+        "text-xs uppercase tracking-wider",
+        isLightMode ? "text-zinc-500" : "text-zinc-400"
+      )}
+    >
+      CPU Usage
+    </span>
+    <span className="text-2xl font-bold">
+      {systemInfo.hardware?.cpu_usage_percent ?? 0}%
+    </span>
+  </div>
+
+  <div
+    className={cn(
+      "w-full h-2 rounded-full overflow-hidden",
+      isLightMode ? "bg-zinc-200" : "bg-zinc-800"
+    )}
+  >
+    <div
+      className="h-full bg-emerald-500 transition-all duration-500"
+      style={{ width: `${systemInfo.hardware?.cpu_usage_percent ?? 0}%` }}
+    />
+  </div>
+
+  <div
+    className={cn(
+      "text-xs mt-3",
+      isLightMode ? "text-zinc-500" : "text-zinc-400"
+    )}
+  >
+    {systemInfo.hardware?.cpu_freq_mhz ?? "-"} MHz
+  </div>
+</div>
+
+      {/* RAM CARD */}
+      <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6 shadow-sm">
+  <div className="flex justify-between items-center mb-4">
+    <span className="text-xs uppercase tracking-wider text-zinc-500">
+      RAM Usage
+    </span>
+    <span className="text-2xl font-bold">
+      {systemInfo.hardware?.ram_used_percent ?? 0}%
+    </span>
+  </div>
+
+  <div className="w-full h-2 rounded-full overflow-hidden bg-zinc-300 dark:bg-zinc-800">
+    <div
+      className="h-full bg-blue-500 transition-all duration-500"
+      style={{ width: `${systemInfo.hardware?.ram_used_percent ?? 0}%` }}
+    />
+  </div>
+
+  <div className="text-xs text-zinc-500 mt-3 space-y-1">
+    <div>
+      {systemInfo.hardware?.ram_used_gb} GB / {systemInfo.hardware?.ram_total_gb} GB
+    </div>
+    <div>
+      Available: {systemInfo.hardware?.ram_available_gb} GB
+    </div>
+  </div>
+</div>
+
+      {/* DISK CARD */}
+       <div
+  className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6 shadow-sm">
+        <div className="flex justify-between items-center mb-4">
+          <span className="text-xs uppercase tracking-wider text-zinc-500">
+            Disk Usage
+          </span>
+          <span className="text-2xl font-bold">
+            {systemInfo.hardware?.disk_used_percent ?? 0}%
+          </span>
+        </div>
+
+        <div className="text-xs text-zinc-500 mt-3 space-y-1">
+    <div>
+      Free: {systemInfo.hardware?.disk_free_gb} GB
+    </div>
+    <div>
+      Total: {systemInfo.hardware?.disk_total_gb} GB
+    </div>
+  </div>
+      </div>
+    </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Hardware Card */}
         <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6 shadow-sm">
@@ -1427,7 +1517,7 @@ const fetchSystemInfo = async () => {
              </div>
              <div className="p-4 bg-zinc-800/20 rounded-xl border border-zinc-800/50">
                <div className="text-zinc-500 text-xs mb-1 uppercase tracking-wider">Architecture</div>
-               <div className="text-zinc-300 text-sm font-medium">{systemInfo.platform?.architecture}</div>
+               <div className="text-zinc-300 text-sm font-medium">{systemInfo.hardware?.architecture}</div>
              </div>
              <div className="p-4 bg-zinc-800/20 rounded-xl border border-zinc-800/50 md:col-span-2 overflow-hidden flex flex-col justify-center">
                <div className="text-zinc-500 text-xs mb-1 uppercase tracking-wider">Python Executable Path</div>
@@ -1435,6 +1525,7 @@ const fetchSystemInfo = async () => {
              </div>
           </div>
         </div>
+      </div>
       </div>
     )}
   </div>

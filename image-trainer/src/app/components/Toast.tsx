@@ -26,11 +26,11 @@ export function Toast({ toast, onClose }: ToastProps) {
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: 20, scale: 0.95 }}
       transition={{ duration: 0.3, ease: "easeOut" }}
-      className={`flex items-start gap-3 w-80 p-4 rounded-xl shadow-lg border
-        ${isSuccess
+      className={`flex items-start gap-3 w-80 p-4 rounded-xl shadow-lg border ${
+        isSuccess
           ? "bg-green-950 border-green-700 text-green-100"
           : "bg-red-950 border-red-700 text-red-100"
-        }`}
+      }`}
     >
       {isSuccess ? (
         <CheckCircle className="w-5 h-5 text-green-400 shrink-0 mt-0.5" />

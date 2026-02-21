@@ -5,10 +5,11 @@ import {
   useCallback,
   useContext,
   useState,
-  ReactNode,
 } from "react";
+import type { ReactNode } from "react";
 import { AnimatePresence } from "framer-motion";
-import { Toast, ToastMessage, ToastType } from "./Toast";
+import { Toast } from "./Toast";
+import type { ToastMessage, ToastType } from "./Toast";
 
 interface ToastContextValue {
   showToast: (type: ToastType, title: string, message: string) => void;
@@ -24,7 +25,6 @@ export function ToastProvider({ children }: { children: ReactNode }) {
       const id = Math.random().toString(36).slice(2);
       setToasts((prev) => [...prev, { id, type, title, message }]);
 
-      // Auto-dismiss after 5 seconds
       setTimeout(() => {
         setToasts((prev) => prev.filter((t) => t.id !== id));
       }, 5000);
@@ -39,7 +39,6 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   return (
     <ToastContext.Provider value={{ showToast }}>
       {children}
-      {/* Toast container — bottom-right corner */}
       <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-3">
         <AnimatePresence>
           {toasts.map((toast) => (

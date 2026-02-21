@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useState, useCallback } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { open as openDialog } from "@tauri-apps/plugin-dialog";
+import { useToast } from "@/app/components/ToastContext"; // 🔔 ADDED
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -155,6 +156,7 @@ function DataTab() {
   const [dropFirst, setDropFirst] = useState(false);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<TabularResult | null>(null);
+  const { showToast } = useToast(); // 🔔 ADDED
 
   const pickFile = useCallback(async () => {
     const selected = await openDialog({
@@ -194,12 +196,34 @@ function DataTab() {
       });
       const parsed: TabularResult = JSON.parse(raw);
       setResult(parsed);
+
+      // 🔔 ADDED — show toast based on result status
+      if (parsed.status === "success") {
+        showToast(
+          "success",
+          "Processing Complete!",
+          parsed.message ?? "Your data was processed successfully."
+        );
+      } else {
+        showToast(
+          "error",
+          "Processing Failed",
+          parsed.message ?? "Something went wrong. Please check your file."
+        );
+      }
+
     } catch (err: unknown) {
       setResult({ status: "error", message: String(err) });
+      // 🔔 ADDED — show toast on unexpected crash
+      showToast(
+        "error",
+        "Unexpected Error",
+        "An error occurred while processing. Check the logs."
+      );
     } finally {
       setLoading(false);
     }
-  }, [filePath, action, fillMethod, encodeColumns, outPath, dropFirst]);
+  }, [filePath, action, fillMethod, encodeColumns, outPath, dropFirst, showToast]); // 🔔 ADDED showToast to deps
 
   return (
     <div className="flex flex-col gap-5 w-full">
@@ -339,18 +363,23 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState<"trainer" | "data">("trainer");
   const [gpuOutput, setGpuOutput] = useState<string | null>(null);
   const [gpuLoading, setGpuLoading] = useState(false);
+  const { showToast } = useToast(); // 🔔 ADDED
 
   const checkGpu = useCallback(async () => {
     setGpuLoading(true);
     try {
       const output: string = await invoke("run_check_gpu");
       setGpuOutput(output);
+      // 🔔 ADDED — success toast when GPU check works
+      showToast("success", "GPU Check Complete!", "Environment info loaded successfully.");
     } catch (err: unknown) {
       setGpuOutput(`Error: ${String(err)}`);
+      // 🔔 ADDED — error toast when GPU check fails
+      showToast("error", "GPU Check Failed", "Could not retrieve GPU info. See details.");
     } finally {
       setGpuLoading(false);
     }
-  }, []);
+  }, [showToast]); // 🔔 ADDED showToast to deps
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-950 font-sans">
@@ -417,7 +446,7 @@ export default function Home() {
             </div>
 
             <div className="flex gap-3">
-              <a
+              
                 href="https://vercel.com/new"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -432,7 +461,7 @@ export default function Home() {
                 />
                 Deploy
               </a>
-              <a
+              
                 href="https://nextjs.org/docs"
                 target="_blank"
                 rel="noopener noreferrer"

@@ -2,8 +2,6 @@
 
 import Image from "next/image";
 import { useState, useCallback, useEffect } from "react";
-import { invoke } from "@tauri-apps/api/core";
-import { open as openDialog } from "@tauri-apps/plugin-dialog";
 import GPUStatus from "./components/GPUStatus";
 import DependencyWizard from "./components/DependencyWizard";
 
@@ -165,7 +163,11 @@ function DataTab() {
   const [result, setResult] = useState<TabularResult | null>(null);
 
   const pickFile = useCallback(async () => {
-    const selected = await openDialog({
+    // Dynamically import the Tauri dialog plugin at call-time so this module
+    // remains SSR-safe. When running as a Tauri app the dialog will open;
+    // in non-desktop environments this will throw and be surfaced to the UI.
+    const dialog = await import("@tauri-apps/plugin-dialog");
+    const selected = await dialog.open({
       multiple: false,
       filters: [{ name: "Data Files", extensions: ["csv", "xlsx", "xls"] }],
     });
@@ -194,7 +196,10 @@ function DataTab() {
         paramsJson = JSON.stringify(paramsObj);
       }
 
-      const raw: string = await invoke("run_tabular_processor", {
+      // Use dynamic import for `invoke` to avoid importing Tauri APIs at
+      // module-evaluation time (SSR compatibility).
+      const tauri = await import("@tauri-apps/api/tauri");
+      const raw: string = await tauri.invoke("run_tabular_processor", {
         file: filePath,
         action: isProcess ? "process" : "load",
         params: paramsJson,
@@ -351,12 +356,14 @@ export default function Home() {
   const [saveDir, setSaveDir] = useState<string>("");
   const [outputs, setOutputs] = useState<Record<string, string | null> | null>(null);
   const [outputsLoading, setOutputsLoading] = useState(false);
+  const [outputsError, setOutputsError] = useState<string | null>(null);
   const [previews, setPreviews] = useState<Record<string, string | null>>({});
 
   const checkGpu = useCallback(async () => {
     setGpuLoading(true);
     try {
-      const output: string = await invoke("run_check_gpu");
+      const tauri = await import("@tauri-apps/api/tauri");
+      const output: string = await tauri.invoke("run_check_gpu");
       setGpuOutput(output);
     } catch (err: unknown) {
       setGpuOutput(`Error: ${String(err)}`);
@@ -369,12 +376,15 @@ export default function Home() {
     if (!saveDir) return;
     setOutputsLoading(true);
     setOutputs(null);
+    setOutputsError(null);
     try {
-      const raw: string = await invoke("get_output_files", { save_dir: saveDir });
+      const tauri = await import("@tauri-apps/api/tauri");
+      const raw: string = await tauri.invoke("get_output_files", { save_dir: saveDir });
       const parsed = JSON.parse(raw) as Record<string, string | null>;
       setOutputs(parsed);
     } catch (err: unknown) {
-      setOutputs({ error: String(err) });
+      setOutputs(null);
+      setOutputsError(String(err));
     } finally {
       setOutputsLoading(false);
     }
@@ -432,9 +442,7 @@ export default function Home() {
     if (!outputs) return;
     const keys = ["confusion_matrix_png", "confusion_matrix_jpg", "training_curves_png", "training_curves_jpg"];
     keys.forEach((k) => {
-      // @ts-ignore
       const p = outputs[k];
-      // @ts-ignore
       loadPreviewFromPath(k, p ?? null);
     });
 
@@ -534,6 +542,9 @@ export default function Home() {
                   {outputsLoading ? 'Loading…' : 'List Outputs'}
                 </button>
               </div>
+              {outputsError && (
+                <div className="mt-2 text-sm text-red-400">{outputsError}</div>
+              )}
 
               {outputs && (
                 <div className="mt-3 grid grid-cols-1 gap-3">
@@ -542,6 +553,10 @@ export default function Home() {
                       <div className="flex items-center gap-3">
                         {/* thumbnail if available */}
                         {previews[k] ? (
+                          // Using a raw <img> here because previews are object URLs
+                          // generated at runtime; Next's <Image> cannot be used for
+                          // these ephemeral local blobs.
+                          // eslint-disable-next-line @next/next/no-img-element
                           <img src={previews[k] ?? undefined} alt={k} className="w-28 h-auto rounded-md border border-zinc-800" />
                         ) : (
                           <div className="w-28 h-20 rounded-md bg-zinc-800 flex items-center justify-center text-xs text-zinc-500">No preview</div>

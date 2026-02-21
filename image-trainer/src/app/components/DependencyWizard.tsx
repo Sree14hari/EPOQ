@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { invoke } from "@tauri-apps/api/core";
 
 type DependencyStatus = {
   python: boolean;
@@ -20,7 +19,8 @@ export default function DependencyWizard({ onComplete }: { onComplete: () => voi
     console.log("DependencyWizard mounted, starting checkDeps()");
     async function checkDeps() {
         try {
-            const raw: string = await invoke("check_dependencies");
+            const tauri = await import("@tauri-apps/api/tauri");
+            const raw: string = await tauri.invoke("check_dependencies");
             // The rust backend parses output and fallback logic should provide valid JSON
             let parsed: DependencyStatus;
             try {
@@ -142,7 +142,7 @@ export default function DependencyWizard({ onComplete }: { onComplete: () => voi
                             1. Download and install Python from the <a href="https://www.python.org/downloads/" target="_blank" rel="noreferrer" className="text-blue-400 hover:underline">official website</a>.
                         </p>
                         <p className="text-zinc-300">
-                            2. <strong>Important:</strong> During installation, make sure to check the box that says <strong>"Add python.exe to PATH"</strong>.
+                            2. <strong>Important:</strong> During installation, make sure to check the box that says <strong>&quot;Add python.exe to PATH&quot;</strong>.
                         </p>
                         <p className="text-zinc-300">
                             3. Restart EPOQ completely for the changes to take effect.

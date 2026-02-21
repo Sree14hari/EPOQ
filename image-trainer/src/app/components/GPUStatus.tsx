@@ -2,7 +2,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { invoke } from "@tauri-apps/api/core";
 
 interface GPUInfo {
   python_version?: string;
@@ -22,7 +21,8 @@ export default function GPUStatus() {
   useEffect(() => {
     async function fetchGPU() {
       try {
-        const result = await invoke<string>("run_check_gpu");
+        const tauri = await import("@tauri-apps/api/tauri");
+        const result = await tauri.invoke<string>("run_check_gpu");
         const parsed = JSON.parse(result);
         setGpuInfo(parsed);
       } catch (error) {

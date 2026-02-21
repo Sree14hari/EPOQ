@@ -5,7 +5,7 @@ import { Command } from '@tauri-apps/plugin-shell';
 import { open } from '@tauri-apps/plugin-dialog';
 import { resolveResource } from '@tauri-apps/api/path';
 import { convertFileSrc, invoke } from '@tauri-apps/api/core';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { FolderOpen, Play, Square, Save, Activity, Terminal, CheckCircle, AlertCircle, BarChart2, Layers, Download, Cpu, Sun, Moon, Database } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
@@ -49,7 +49,7 @@ const PRESETS: Preset[] = [
 
 interface EvalResult {
   status: string;
-  report: Record<string, any>;
+  report: Record<string, unknown>;
   confusion_matrix_path: string;
   total_epochs: number;
   test_size: number;
@@ -90,9 +90,9 @@ export default function Home() {
   const [recentExperiments, setRecentExperiments] = useState<{id: string; date: string; accuracy: string; model: string}[]>([]);
   const finalAccuracyRef = useRef<string | null>(null);
   const [isRunning, setIsRunning] = useState(false);
-  const [pid, setPid] = useState<number | null>(null);
+  const [_pid, setPid] = useState<number | null>(null);
   const [logs, setLogs] = useState<LogEntry[]>([]);
-  const [chartData, setChartData] = useState<any[]>([]);
+  const [chartData, setChartData] = useState<Array<Record<string, unknown>>>([]);
   const [progress, setProgress] = useState(0);
   const [currentStatus, setCurrentStatus] = useState<TrainingStatus | null>(null);
   const [evalResult, setEvalResult] = useState<EvalResult | null>(null);
@@ -108,13 +108,13 @@ export default function Home() {
   const [tabOutPath, setTabOutPath] = useState('');
   const [tabLoading, setTabLoading] = useState(false);
   const [tabResult, setTabResult] = useState<TabularResult | null>(null);
-  const [systemInfo, setSystemInfo] = useState<any | null>(null);
+  const [systemInfo, setSystemInfo] = useState<Record<string, unknown> | null>(null);
   const [systemLoading, setSystemLoading] = useState(false);
   const [systemError, setSystemError] = useState<string | null>(null);
   const [depsChecked, setDepsChecked] = useState(false);
   const logsEndRef = useRef<HTMLDivElement>(null);
   const commandRef = useRef<Command<string> | null>(null);
-  const childRef = useRef<any>(null);
+  const childRef = useRef<unknown>(null);
 
   // Check GPU availability
   useEffect(() => {
@@ -601,6 +601,7 @@ const fetchSystemInfo = async () => {
       <header className="sticky top-0 z-50 flex items-center justify-between bg-black/80 backdrop-blur-md border-b border-zinc-800/50 px-8 py-4 mb-8">
         <div className="flex items-center gap-4">
           <div className="w-14 h-14 bg-zinc-900 rounded-full border border-zinc-800 overflow-hidden shrink-0">
+             {/* eslint-disable-next-line @next/next/no-img-element */}
              <img src="/epoq2.png" alt="EPOQ Logo" className="w-full h-full object-cover" />
           </div>
           <div>
@@ -1212,17 +1213,25 @@ const fetchSystemInfo = async () => {
                                          </tr>
                                       </thead>
                                       <tbody className="divide-y divide-zinc-800/50">
-                                          {Object.entries(evalResult.report).map(([key, val]: [string, any]) => {
-                                             if (typeof val !== 'object') return null;
-                                             return (
-                                               <tr key={key} className="group hover:bg-white/5 transition-colors">
-                                                  <td className="px-5 py-3 font-mono text-zinc-300 font-medium whitespace-nowrap group-hover:text-white border-r border-dashed border-zinc-800/30">{key}</td>
-                                                  <td className="px-5 py-3 whitespace-nowrap text-right font-mono text-zinc-400">{val.precision?.toFixed(4)}</td>
-                                                  <td className="px-5 py-3 whitespace-nowrap text-right font-mono text-zinc-400">{val.recall?.toFixed(4)}</td>
-                                                  <td className="px-5 py-3 whitespace-nowrap text-right font-mono text-zinc-300 font-semibold">{val.f1_score?.toFixed(4) ?? val['f1-score']?.toFixed(4)}</td>
-                                                  <td className="px-5 py-3 whitespace-nowrap text-right font-mono text-zinc-500">{val.support}</td>
-                                               </tr>
-                                             );
+                                          {Object.entries(evalResult.report).map(([key, val]: [string, unknown]) => {
+                                            if (!val || typeof val !== 'object') return null;
+                                            const rec = val as Record<string, unknown>;
+                                            const precision = rec['precision'];
+                                            const recall = rec['recall'];
+                                            const f1a = rec['f1_score'];
+                                            const f1b = rec['f1-score'];
+                                            const support = rec['support'];
+                                            const fmt = (v: unknown) => (typeof v === 'number' ? v.toFixed(4) : typeof v === 'string' && !Number.isNaN(Number(v)) ? Number(v).toFixed(4) : '-');
+                                            const fmtSupport = (v: unknown) => (typeof v === 'number' || typeof v === 'string' ? String(v) : '-');
+                                            return (
+                                              <tr key={key} className="group hover:bg-white/5 transition-colors">
+                                                <td className="px-5 py-3 font-mono text-zinc-300 font-medium whitespace-nowrap group-hover:text-white border-r border-dashed border-zinc-800/30">{key}</td>
+                                                <td className="px-5 py-3 whitespace-nowrap text-right font-mono text-zinc-400">{fmt(precision)}</td>
+                                                <td className="px-5 py-3 whitespace-nowrap text-right font-mono text-zinc-400">{fmt(recall)}</td>
+                                                <td className="px-5 py-3 whitespace-nowrap text-right font-mono text-zinc-300 font-semibold">{fmt(f1a ?? f1b)}</td>
+                                                <td className="px-5 py-3 whitespace-nowrap text-right font-mono text-zinc-500">{fmtSupport(support)}</td>
+                                              </tr>
+                                            );
                                           })}
                                       </tbody>
                                    </table>

@@ -21,6 +21,26 @@
       "name": "python3",
       "cmd": "python3",
       "args": true
+    },
+    {
+      "name": "cmd",
+      "cmd": "cmd.exe",
+      "args": true
+    },
+    {
+      "name": "powershell",
+      "cmd": "powershell.exe",
+      "args": true
+    },
+    {
+      "name": "conda",
+      "cmd": "conda",
+      "args": true
+    },
+    {
+      "name": "bash",
+      "cmd": "bash",
+      "args": true
     }
   ]
 },
@@ -35,6 +55,26 @@
     {
       "name": "python3",
       "cmd": "python3",
+      "args": true
+    },
+    {
+      "name": "cmd",
+      "cmd": "cmd.exe",
+      "args": true
+    },
+    {
+      "name": "powershell",
+      "cmd": "powershell.exe",
+      "args": true
+    },
+    {
+      "name": "conda",
+      "cmd": "conda",
+      "args": true
+    },
+    {
+      "name": "bash",
+      "cmd": "bash",
       "args": true
     }
   ]

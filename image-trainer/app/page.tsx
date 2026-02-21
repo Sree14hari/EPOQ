@@ -334,7 +334,7 @@ export default function Home() {
              <img src="/epoq2.png" alt="EPOQ Logo" className="w-full h-full object-cover dark:invert" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-900 dark:text-white">
+            <h1 className="text-2xl font-bold tracking-tight text-zinc-900 light:text-zinc-900 dark:text-white">
               EPOQ
             </h1>
             <p className="text-sm text-zinc-500 font-mono">v0.1.0-beta</p>
@@ -404,8 +404,8 @@ export default function Home() {
         <section className="lg:col-span-4 space-y-8">
           <div className="bg-zinc-100 dark:bg-zinc-50 dark:bg-zinc-900/30 border border-zinc-800/50 rounded-2xl p-6 backdrop-blur-sm">
             <div className="flex items-center gap-3 mb-6">
-              <Layers className="w-5 h-5 text-zinc-500 dark:text-zinc-400" />
-              <h2 className="text-lg font-semibold tracking-tight">Configuration</h2>
+              <Layers className="w-5 h-5 text-zinc-500 light:text-zinc-400" />
+              <h2 className="text-lg font-semibold tracking-tight dark:text-zinc-400">Configuration</h2>
             </div>
 
             <div className="space-y-6">

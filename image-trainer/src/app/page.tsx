@@ -4,7 +4,8 @@ import Image from "next/image";
 import { useState, useCallback } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { open as openDialog } from "@tauri-apps/plugin-dialog";
-import { useToast } from "@/app/components/ToastContext"; // 🔔 ADDED
+import { useToast } from "@/app/components/ToastContext";
+import GPUStatus from "./components/GPUStatus";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 

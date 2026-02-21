@@ -305,6 +305,7 @@ export default function Home() {
                   </div>
                   <button 
                      onClick={handlePickDataset}
+                     disabled={isRunning}             
                      className="p-2.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 rounded-lg text-zinc-400 hover:text-white transition-colors"
                   >
                     <FolderOpen className="w-5 h-5" />
@@ -319,6 +320,7 @@ export default function Home() {
                   <select 
                     value={model}
                     onChange={(e) => setModel(e.target.value)}
+                    disabled={isRunning}              
                     className="w-full appearance-none bg-black border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-zinc-300 focus:border-zinc-600 focus:outline-none transition-colors"
                   >
                     <option value="resnet18">ResNet-18 (Standard)</option>
@@ -339,6 +341,7 @@ export default function Home() {
                     type="number" 
                     value={epochs}
                     onChange={(e) => setEpochs(parseInt(e.target.value) || 1)}
+                    disabled={isRunning}                
                     className="w-full bg-black border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-zinc-300 focus:border-zinc-600 focus:outline-none transition-colors font-mono"
                   />
                 </div>
@@ -348,6 +351,7 @@ export default function Home() {
                     type="number" 
                     value={batchSize}
                     onChange={(e) => setBatchSize(parseInt(e.target.value) || 1)}
+                    disabled={isRunning}          
                     className="w-full bg-black border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-zinc-300 focus:border-zinc-600 focus:outline-none transition-colors font-mono"
                   />
                 </div>
@@ -366,6 +370,7 @@ export default function Home() {
                   />
                   <button 
                      onClick={handlePickSavePath}
+                     disabled={isRunning}           
                      className="p-2.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 rounded-lg text-zinc-400 hover:text-white transition-colors"
                   >
                     <Save className="w-5 h-5" />
@@ -378,7 +383,7 @@ export default function Home() {
                 <label className="flex items-center justify-between cursor-pointer group">
                   <span className="text-sm text-zinc-400 group-hover:text-zinc-200 transition-colors">Generate Dataset Archive</span>
                   <div className={cn("w-10 h-6 rounded-full border flex items-center px-1 transition-all", zipDataset ? "bg-white border-white justify-end" : "bg-zinc-900 border-zinc-700 justify-start")}>
-                    <input type="checkbox" className="hidden" checked={zipDataset} onChange={e => setZipDataset(e.target.checked)} />
+                    <input type="checkbox" className="hidden" checked={zipDataset} onChange={e => setZipDataset(e.target.checked)}disabled={isRunning} />
                     <div className={cn("w-3.5 h-3.5 rounded-full transition-colors", zipDataset ? "bg-black" : "bg-zinc-500")} />
                   </div>
                 </label>

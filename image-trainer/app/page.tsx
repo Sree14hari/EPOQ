@@ -1214,24 +1214,16 @@ const fetchSystemInfo = async () => {
                                       </thead>
                                       <tbody className="divide-y divide-zinc-800/50">
                                           {Object.entries(evalResult.report).map(([key, val]: [string, unknown]) => {
-                                            if (!val || typeof val !== 'object') return null;
-                                            const rec = val as Record<string, unknown>;
-                                            const precision = rec['precision'];
-                                            const recall = rec['recall'];
-                                            const f1a = rec['f1_score'];
-                                            const f1b = rec['f1-score'];
-                                            const support = rec['support'];
-                                            const fmt = (v: unknown) => (typeof v === 'number' ? v.toFixed(4) : typeof v === 'string' && !Number.isNaN(Number(v)) ? Number(v).toFixed(4) : '-');
-                                            const fmtSupport = (v: unknown) => (typeof v === 'number' || typeof v === 'string' ? String(v) : '-');
-                                            return (
-                                              <tr key={key} className="group hover:bg-white/5 transition-colors">
-                                                <td className="px-5 py-3 font-mono text-zinc-300 font-medium whitespace-nowrap group-hover:text-white border-r border-dashed border-zinc-800/30">{key}</td>
-                                                <td className="px-5 py-3 whitespace-nowrap text-right font-mono text-zinc-400">{fmt(precision)}</td>
-                                                <td className="px-5 py-3 whitespace-nowrap text-right font-mono text-zinc-400">{fmt(recall)}</td>
-                                                <td className="px-5 py-3 whitespace-nowrap text-right font-mono text-zinc-300 font-semibold">{fmt(f1a ?? f1b)}</td>
-                                                <td className="px-5 py-3 whitespace-nowrap text-right font-mono text-zinc-500">{fmtSupport(support)}</td>
-                                              </tr>
-                                            );
+                                             if (typeof val !== 'object') return null;
+                                             return (
+                                               <tr key={key} className="group hover:bg-white/5 transition-colors">
+                                                  <td className="px-5 py-3 font-mono text-zinc-300 font-medium whitespace-nowrap group-hover:text-white border-r border-dashed border-zinc-800/30">{key}</td>
+                                                  <td className="px-5 py-3 whitespace-nowrap text-right font-mono text-zinc-400">{val.precision?.toFixed(4)}</td>
+                                                  <td className="px-5 py-3 whitespace-nowrap text-right font-mono text-zinc-400">{val.recall?.toFixed(4)}</td>
+                                                  <td className="px-5 py-3 whitespace-nowrap text-right font-mono text-zinc-300 font-semibold">{val.f1_score?.toFixed(4) ?? val['f1-score']?.toFixed(4)}</td>
+                                                  <td className="px-5 py-3 whitespace-nowrap text-right font-mono text-zinc-500">{val.support}</td>
+                                               </tr>
+                                             );
                                           })}
                                       </tbody>
                                    </table>

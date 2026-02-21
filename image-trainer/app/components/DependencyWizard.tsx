@@ -66,10 +66,9 @@ export default function DependencyWizard({ onComplete }: { onComplete: () => voi
   if (showSplash) {
     content = (
       <div className="flex flex-col items-center justify-center gap-8 w-full h-full bg-white">
-                    <div className="w-32 h-32 md:w-48 md:h-48 rounded-full overflow-hidden border border-zinc-200 shadow-[0_0_80px_rgba(0,0,0,0.05)] bg-zinc-50 flex items-center justify-center">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src="/epoq2.png" alt="EPOQ Logo" className="w-[85%] h-[85%] object-cover rounded-full" />
-                </div>
+        <div className="w-32 h-32 md:w-48 md:h-48 rounded-full overflow-hidden border border-zinc-200 shadow-[0_0_80px_rgba(0,0,0,0.05)] bg-zinc-50 flex items-center justify-center">
+          <img src="/epoq2.png" alt="EPOQ Logo" className="w-[85%] h-[85%] object-cover rounded-full" />
+        </div>
         <div className="flex flex-col items-center">
           <h1 className="text-4xl md:text-6xl font-black tracking-[0.2em] text-black">EPOQ</h1>
           <p className="text-zinc-500 tracking-[0.3em] uppercase text-xs mt-3">Image Trainer</p>

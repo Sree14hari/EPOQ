@@ -14,6 +14,11 @@ function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+const copyLogsToClipboard = (logs: LogEntry[]) => {
+  const text = logs.map(l => `[${l.timestamp}] [${l.type.toUpperCase()}] ${l.message}`).join('\n');
+  navigator.clipboard.writeText(text);
+};
+
 interface LogEntry {
   type: 'info' | 'error' | 'success';
   message: string;

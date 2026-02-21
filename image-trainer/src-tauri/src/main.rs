@@ -90,7 +90,11 @@ async fn run_check_gpu(app: tauri::AppHandle) -> Result<String, String> {
         .join("check_gpu.py");
 
     let script = script_path.to_string_lossy().to_string();
-    run_python(&app, &[script.as_str()]).await
+
+    match run_python(&app, &[script.as_str()]).await {
+        Ok(output) => Ok(output.trim().to_string()), // remove extra newline
+        Err(e) => Err(format!("GPU detection failed: {}", e)),
+    }
 }
 
 fn main() {

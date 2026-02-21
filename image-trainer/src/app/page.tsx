@@ -446,6 +446,8 @@ export default function Home() {
               </p>
             </div>
 
+            <GPUStatus/>
+
             <div className="flex gap-3">
               
                 href="https://vercel.com/new"

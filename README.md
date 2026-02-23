@@ -1,6 +1,6 @@
 <div align="center">
 
-![EPOQ](image-trainer/public/epoq3.png)
+![EPOQ](epoq4.png)
 
 **A powerful, cross-platform desktop application for training image classification models.**
 

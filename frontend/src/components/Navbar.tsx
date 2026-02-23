@@ -32,16 +32,15 @@ export default function Navbar() {
         {/* Left: Brand */}
         <div className="flex items-center gap-8">
           <a href="#" className="flex items-center gap-2.5 group relative">
-            <div className="relative w-8 h-8 rounded-xl overflow-hidden flex items-center justify-center bg-black">
-  {/* Shine effect (optional – remove if you want ultra-minimal) */}
-  <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 pointer-events-none" />
-
-  <img 
-    src="/logo.webp" 
-    alt="EPOQ Logo"
-    className="w-10 h-10 object-contain relative z-10"
-  />
-</div>
+            <div className="relative w-9 h-9 rounded-full overflow-hidden ring-2 ring-orange-500/40 group-hover:ring-orange-400/70 transition-all duration-500 shadow-[0_0_12px_rgba(234,88,12,0.35)]">
+              {/* Shine sweep */}
+              <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 pointer-events-none z-10" />
+              <img
+                src="/epoq2.png"
+                alt="EPOQ Logo"
+                className="w-full h-full object-cover"
+              />
+            </div>
             <span className="text-lg font-bold tracking-tight text-white uppercase hidden sm:block">
               EPOQ
             </span>
@@ -81,7 +80,9 @@ export default function Navbar() {
           </a>
 
           <a 
-            href="#download" 
+            href="https://github.com/Sree14hari/EPOQ/releases/tag/V0.2.0-beta"
+            target="_blank"
+            rel="noopener noreferrer"
             className="group relative inline-flex items-center gap-2 bg-white text-black px-5 py-2 rounded-xl text-[13px] font-bold overflow-hidden transition-all active:scale-95"
           >
             {/* Hover Fill Effect */}

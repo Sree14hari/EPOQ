@@ -3,6 +3,7 @@
 
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
+import { ArrowRight, Github } from "lucide-react";
 import EnergyBeam from "./components/ui/energy-beam";
 import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
@@ -65,6 +66,24 @@ function App() {
         </div>
 
         <div className="relative z-20 max-w-7xl mx-auto flex flex-col items-center">
+          {/* Release Pill */}
+          <motion.a
+            href="https://github.com/Sree14hari/EPOQ/releases/tag/V0.2.0-beta"
+            target="_blank"
+            rel="noopener noreferrer"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            whileHover={{ scale: 1.05 }}
+            className="group inline-flex items-center gap-2 mb-8 px-4 py-1.5 rounded-full border border-orange-500/30 bg-orange-500/10 hover:bg-orange-500/20 hover:border-orange-500/60 text-orange-300 text-xs font-semibold tracking-wide transition-all duration-300 cursor-pointer shadow-[0_0_20px_rgba(234,88,12,0.15)] hover:shadow-[0_0_30px_rgba(234,88,12,0.3)]"
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-orange-400 animate-pulse shrink-0" />
+            <span className="text-orange-400/70">New release</span>
+            <span className="text-white/30 select-none">·</span>
+            <span>v0.2.0-beta is available</span>
+            <ArrowRight className="w-3 h-3 opacity-60 group-hover:translate-x-0.5 group-hover:opacity-100 transition-all duration-300" />
+          </motion.a>
+
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -254,6 +273,98 @@ function App() {
     </div>
   </div>
 </section>
+      {/* Download Section */}
+      <section
+        id="download"
+        className="relative py-32 overflow-hidden border-t border-white/5"
+      >
+        {/* Background glows */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-orange-600/10 blur-[140px] rounded-full" />
+          <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-orange-500/30 to-transparent" />
+        </div>
+
+        <div className="relative z-10 max-w-4xl mx-auto px-6 text-center">
+          {/* Badge */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="inline-flex items-center gap-2 mb-6 px-3 py-1.5 rounded-full border border-orange-500/30 bg-orange-500/10 text-orange-400 text-xs font-semibold tracking-widest uppercase"
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-orange-400 animate-pulse" />
+            V0.2.0-beta · Now Available
+          </motion.div>
+
+          {/* Heading */}
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="text-5xl md:text-7xl font-black tracking-tighter text-white mb-5 leading-[0.95]"
+          >
+            Download EPOQ.
+          </motion.h2>
+
+          <motion.p
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.25 }}
+            className="text-white/50 text-lg max-w-xl mx-auto mb-10"
+          >
+            Train PyTorch image classifiers locally — no cloud, no CLI. Just install and run.
+          </motion.p>
+
+          {/* CTA Buttons */}
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.35 }}
+            className="flex flex-col sm:flex-row items-center justify-center gap-4"
+          >
+            {/* Primary Download */}
+            <a
+              href="https://github.com/Sree14hari/EPOQ/releases/tag/V0.2.0-beta"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group relative inline-flex items-center gap-3 bg-orange-500 hover:bg-orange-400 text-white px-8 py-3.5 rounded-2xl text-sm font-bold overflow-hidden transition-all duration-300 active:scale-95 shadow-[0_0_30px_rgba(234,88,12,0.4)] hover:shadow-[0_0_45px_rgba(234,88,12,0.6)]"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+              </svg>
+              Download for Windows
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
+            </a>
+
+            {/* Secondary: View Release */}
+            <a
+              href="https://github.com/Sree14hari/EPOQ/releases/tag/V0.2.0-beta"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl border border-white/10 bg-white/5 text-white/70 hover:text-white hover:border-white/20 hover:bg-white/10 text-sm font-medium transition-all duration-300"
+            >
+              <Github className="w-4 h-4" />
+              View Release Notes
+            </a>
+          </motion.div>
+
+          {/* Version meta */}
+          <motion.p
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.5 }}
+            className="mt-8 text-white/20 text-xs"
+          >
+            EPOQ V0.2.0-beta · Open Source · MIT License
+          </motion.p>
+        </div>
+      </section>
+
       <Footer />
     </div>
   );

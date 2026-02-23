@@ -10,7 +10,7 @@ import {
 import { motion, useInView } from "framer-motion"
 import type { HTMLMotionProps } from "framer-motion"
 
-import { cn } from "@/lib/utils"
+import { cn } from "../../lib/utils"
 
 interface SequenceContextValue {
   completeItem: (index: number) => void

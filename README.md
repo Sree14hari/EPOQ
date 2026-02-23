@@ -1,6 +1,6 @@
 <div align="center">
 
-![EPOQ](epoq3.png)
+![EPOQ](epoq4.png)
 
 **A powerful, cross-platform desktop application for training image classification models.**
 

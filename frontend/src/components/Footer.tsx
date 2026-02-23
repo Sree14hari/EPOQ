@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useRef } from 'react';
+import { useRef } from 'react';
 import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
-import { Github, Twitter, Linkedin, Youtube, ArrowUpRight, ShieldCheck, Heart, HandHeartIcon } from 'lucide-react';
+import { Github, Twitter, Linkedin, ArrowUpRight, HandHeartIcon } from 'lucide-react';
 
 export default function NextLevelFooter() {
     const footerRef = useRef<HTMLElement>(null);

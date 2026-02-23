@@ -14,7 +14,7 @@ interface IconCloudProps {
 
 export function IconCloud({ images }: IconCloudProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const animationRef = useRef<number>()
+  const animationRef = useRef<number>(undefined)
   const rotationRef = useRef({ x: 0, y: 0 })
 
   const [icons, setIcons] = useState<Icon[]>([])

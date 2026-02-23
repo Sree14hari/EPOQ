@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from "react"
-import { motion, MotionProps, useInView } from "motion/react"
+import { motion, useInView } from "framer-motion"
+import type { HTMLMotionProps } from "framer-motion"
 
 import { cn } from "@/lib/utils"
 
-interface TypingAnimationProps extends MotionProps {
+interface TypingAnimationProps extends HTMLMotionProps<"span"> {
   children?: string
   words?: string[]
   className?: string

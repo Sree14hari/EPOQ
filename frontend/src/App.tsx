@@ -1,6 +1,6 @@
 "use client";
 
-import { Download, Github } from "lucide-react";
+
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import EnergyBeam from "./components/ui/energy-beam";

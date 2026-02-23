@@ -1,8 +1,8 @@
 "use client";
 
-import { motion, useScroll, useTransform } from 'framer-motion';
-import { ArrowUpRight, Zap, Database, Terminal, Cpu } from 'lucide-react';
-import { useRef } from 'react';
+import { motion } from 'framer-motion';
+import { ArrowUpRight } from 'lucide-react';
+import { } from 'react';
 import BatteryChargingIcon from './ui/battery-charging-icon';
 import CpuIcon from './ui/cpu-icon';
 import FileDescriptionIcon from './ui/file-description-icon';

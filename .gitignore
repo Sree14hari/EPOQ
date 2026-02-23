@@ -60,3 +60,6 @@ ehthumbs_vista.db
 .vscode/
 *.swp
 *.swo
+python/
+image-trainer/
+epoq_flutter/

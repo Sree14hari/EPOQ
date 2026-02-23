@@ -1,8 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from "react"
 import { motion, useInView } from "framer-motion"
 import type { HTMLMotionProps } from "framer-motion"
+import { clsx, type ClassValue } from "clsx"
+import { twMerge } from "tailwind-merge"
 
-import { cn } from "../../lib/utils"
+function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs))
+}
 
 interface TypingAnimationProps extends HTMLMotionProps<"span"> {
   children?: string

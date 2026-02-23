@@ -10,6 +10,7 @@ import Features from "./components/Features";
 import { AuroraText } from "./components/ui/aurora-text";
 import { Terminal, TypingAnimation, AnimatedSpan } from "./components/ui/terminal";
 import { IconCloud } from "./components/ui/icon-cloud"
+import ContributorsBadge from "./components/Contributors";
 
 function App() {
   const heroRef = useRef<HTMLElement>(null);
@@ -81,12 +82,22 @@ function App() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2 }}
-            className="text-xl text-white/60 max-w-2xl mb-12"
+            className="text-xl text-white/60 max-w-2xl mb-8"
           >
             A high-performance desktop GUI for training PyTorch Image
             Classification models. No cloud bills. No CLI scripts. Just pure
             local power.
           </motion.p>
+
+          {/* Contributors Badge */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="mb-12"
+          >
+            <ContributorsBadge />
+          </motion.div>
 
           <motion.div
             style={{ scale: imageScale, y: imageY }}

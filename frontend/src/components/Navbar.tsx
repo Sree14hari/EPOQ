@@ -32,11 +32,16 @@ export default function Navbar() {
         {/* Left: Brand */}
         <div className="flex items-center gap-8">
           <a href="#" className="flex items-center gap-2.5 group relative">
-            <div className="relative w-8 h-8 rounded-xl bg-gradient-to-br from-orange-500 to-orange-700 flex items-center justify-center overflow-hidden">
-               {/* Shine effect */}
-               <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
-               <span className="font-black text-sm text-white relative z-10">E</span>
-            </div>
+            <div className="relative w-8 h-8 rounded-xl overflow-hidden flex items-center justify-center bg-black">
+  {/* Shine effect (optional – remove if you want ultra-minimal) */}
+  <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 pointer-events-none" />
+
+  <img 
+    src="/logo.webp" 
+    alt="EPOQ Logo"
+    className="w-10 h-10 object-contain relative z-10"
+  />
+</div>
             <span className="text-lg font-bold tracking-tight text-white uppercase hidden sm:block">
               EPOQ
             </span>

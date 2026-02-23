@@ -2,7 +2,7 @@
 
 import React, { useRef } from 'react';
 import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
-import { Github, Twitter, Linkedin, Youtube, ArrowUpRight, ShieldCheck, Heart } from 'lucide-react';
+import { Github, Twitter, Linkedin, Youtube, ArrowUpRight, ShieldCheck, Heart, HandHeartIcon } from 'lucide-react';
 
 export default function NextLevelFooter() {
     const footerRef = useRef<HTMLElement>(null);
@@ -29,8 +29,12 @@ export default function NextLevelFooter() {
                 <div className="flex flex-col md:flex-row justify-between items-start gap-12 pb-20 border-b border-white/5">
                     <div className="space-y-6">
                         <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-orange-600 rounded-xl flex items-center justify-center shadow-lg shadow-orange-600/20">
-                                <span className="text-white font-black text-xl">E</span>
+                            <div className="w-10 h-10 rounded-xl overflow-hidden shadow-lg shadow-orange-600/20">
+                            <img
+                                src="/logo.webp"
+                                alt="EPOQ Logo"
+                                className="w-full h-full object-contain"
+                            />
                             </div>
                             <span className="text-3xl font-bold text-white tracking-tighter italic">EPOQ</span>
                         </div>
@@ -89,8 +93,8 @@ export default function NextLevelFooter() {
                     <div className="flex gap-8 mt-6 md:mt-0 items-center">
                         <div className="flex items-center gap-2 text-white/40 hover:text-white transition-colors cursor-pointer">
                             {/* <ShieldCheck size={14} className="text-orange-500" /> */}
-                            <Heart size={14} className="text-red-500" />
-                            <span className="text-[10px] uppercase tracking-widest">shreehari R</span>
+                            <HandHeartIcon size={14} className="text-red-500" />
+                            <span className="text-[10px] uppercase tracking-widest">sreehari R</span>
                         </div>
                         <a href="#top" className="group p-2 border border-white/10 rounded-full hover:border-orange-500 transition-colors">
                             <ArrowUpRight size={20} className="text-white group-hover:text-orange-500 transition-colors" />

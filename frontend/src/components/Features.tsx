@@ -3,7 +3,12 @@
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { ArrowUpRight, Zap, Database, Terminal, Cpu } from 'lucide-react';
 import { useRef } from 'react';
-
+import BatteryChargingIcon from './ui/battery-charging-icon';
+import CpuIcon from './ui/cpu-icon';
+import FileDescriptionIcon from './ui/file-description-icon';
+import Cloud3Icon from './ui/cloud-3-icon';
+import ShieldCheck from './ui/shield-check';
+import TerminalIcon from './ui/terminal-icon';
 export default function Features() {
   return (
     <section id="features" className="py-32 px-6 relative bg-black overflow-hidden">
@@ -31,14 +36,14 @@ export default function Features() {
           <FeatureBlock 
             title="Real-time Analytics"
             description="Monitor training loss, accuracy, and system metrics with zero latency. Interactive charts give you instant feedback on model convergence."
-            icon={<Zap className="text-orange-500 w-5 h-5" />}
+            icon={<BatteryChargingIcon className="text-orange-500 w-5 h-5" />}
             visual={<LiveChartVisual />}
           />
 
         <FeatureBlock 
           title="Native Rust Core"
           description="Built on Tauri v2. Blazing fast performance with minimal memory overhead compared to traditional Electron apps."
-          icon={<Cpu className="text-orange-500 w-5 h-5" />}
+          icon={<CpuIcon className="text-orange-500 w-5 h-5" />}
           visual={<RustCoreVisual />}
           reverse
         />
@@ -46,14 +51,14 @@ export default function Features() {
         <FeatureBlock 
           title="Smart Datasets"
           description="Auto-split folders, validation sets, and one-click ZIP exports. Drag & drop simplicity for complex data pipelines."
-          icon={<Database className="text-orange-500 w-5 h-5" />}
+          icon={<Cloud3Icon className="text-orange-500 w-5 h-5" />}
           visual={<DatasetVisual />}
         />
 
         <FeatureBlock 
           title="Zero-Config UI"
           description="Configure hyper-parameters via a sleek, intuitive UI. No more fighting with YAML files or command-line arguments."
-          icon={<Terminal className="text-orange-500 w-5 h-5" />}
+          icon={<TerminalIcon className="text-orange-500 w-5 h-5" />}
           visual={<TerminalVisual />}
           reverse
         />
@@ -75,7 +80,7 @@ function FeatureBlock({ title, description, visual, icon, reverse = false }: any
         className="flex-1 space-y-6"
       >
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-white/5 rounded-lg border border-white/10">{icon}</div>
+          <div className="w-10 h-10 flex items-center justify-center bg-white/5 rounded-xl border border-white/10">{icon}</div>
           <span className="text-orange-500 font-mono text-sm tracking-widest uppercase">Performance</span>
         </div>
         <h3 className="text-4xl md:text-5xl font-bold tracking-tight text-white leading-tight">
@@ -190,8 +195,8 @@ function DatasetVisual() {
             className="p-4 bg-white/5 border border-white/5 rounded-xl flex items-center justify-between transition-colors"
           >
             <div className="flex items-center gap-4">
-              <div className="w-10 h-10 rounded-lg bg-orange-500/10 border border-orange-500/20 flex items-center justify-center text-orange-500 font-bold">
-                {i === 1 ? 'IMG' : i === 2 ? 'LBL' : 'VAL'}
+              <div className="w-10 h-10 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center">
+                <FileDescriptionIcon className="w-5 h-5 text-orange-500" />
               </div>
               <div>
                 <div className="text-white text-sm font-medium">dataset_v0{i}.zip</div>
@@ -208,7 +213,7 @@ function DatasetVisual() {
         transition={{ duration: 4, repeat: Infinity }}
         className="absolute bottom-6 right-6 bg-orange-600 p-4 rounded-2xl shadow-2xl border border-orange-400/50"
       >
-        <Zap className="text-white" fill="white" />
+        <ShieldCheck className="text-white" fill="white" />
       </motion.div>
     </div>
   );
